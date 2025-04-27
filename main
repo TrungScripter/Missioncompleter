@@ -1,4 +1,4 @@
---[[ Hello Kitty Auto Mission Completer Script with Debugging ]]--
+--[[ Hello Kitty Auto Mission Completer Script with Draggable GUI ]]--
 
 -- Services
 local Players = game:GetService("Players")
@@ -12,11 +12,39 @@ screenGui.Parent = playerGui
 -- Create the Main GUI
 local mainFrame = Instance.new("Frame")
 mainFrame.Size = UDim2.new(0, 300, 0, 450)
-mainFrame.Position = UDim2.new(0.5, -150, 0.5, -225)
+mainFrame.Position = UDim2.new(0.5, -150, 0.5, -225)  -- Initially centered position
 mainFrame.BackgroundColor3 = Color3.fromRGB(255, 182, 193)
 mainFrame.BorderSizePixel = 0
 mainFrame.Parent = screenGui
-mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)  -- Centered by default
+
+-- Make the GUI draggable
+local dragging = false
+local dragInput, dragStart, startPos
+
+-- Function to handle dragging logic
+mainFrame.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    -- Check if the mouse button is pressed on the frame
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = mainFrame.Position
+    end
+end)
+
+mainFrame.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - dragStart
+        mainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
+mainFrame.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
+    end
+end)
 
 -- Add the title
 local titleLabel = Instance.new("TextLabel")
