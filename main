@@ -1,136 +1,181 @@
--- 🎀 Hello Kitty Auto Task GUI + Mission Detector 🎀
--- By (Your Name) | For Educational and AFK Purposes
--- Game: Bubble Gum Simulator Infinity
--- Version: 1.0
+--[[ Hello Kitty Auto Mission Completer Script with Debugging ]]--
 
--- Roblox Services
-local player = game.Players.LocalPlayer
+-- Services
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
-local replicatedStorage = game:GetService("ReplicatedStorage")
-
--- Remotes (Adjust based on your game!)
-local Remotes = replicatedStorage:WaitForChild("Remotes")
-local BlowBubbleEvent = Remotes:FindFirstChild("BlowBubble")
-local CollectCoinEvent = Remotes:FindFirstChild("CollectCoin")
-local HatchEggEvent = Remotes:FindFirstChild("HatchEgg")
-
--- Mission Detection (Adjust if necessary)
-local missionGui = playerGui:WaitForChild("CompetitiveUI", 10)
-local missionLabel = missionGui and missionGui:FindFirstChild("MissionLabel")
-
--- GUI Creation
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "HelloKittyAutoFarm"
 screenGui.Parent = playerGui
 
+-- Create the Main GUI
 local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 300, 0, 400)
-mainFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
+mainFrame.Size = UDim2.new(0, 300, 0, 450)
+mainFrame.Position = UDim2.new(0.5, -150, 0.5, -225)
 mainFrame.BackgroundColor3 = Color3.fromRGB(255, 182, 193)
 mainFrame.BorderSizePixel = 0
 mainFrame.Parent = screenGui
 mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
 
-local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 20)
-corner.Parent = mainFrame
+-- Add the title
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Text = "Hello Kitty Auto Mission 🎀"
+titleLabel.Size = UDim2.new(1, 0, 0, 40)
+titleLabel.BackgroundColor3 = Color3.fromRGB(255, 182, 193)
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextSize = 20
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.Parent = mainFrame
 
-local kittyImage = Instance.new("ImageLabel")
-kittyImage.Size = UDim2.new(0, 100, 0, 100)
-kittyImage.Position = UDim2.new(0.5, -50, 0, 10)
-kittyImage.BackgroundTransparency = 1
-kittyImage.Image = "rbxassetid://5864590482"
-kittyImage.Parent = mainFrame
-
+-- Create the Start Button
 local startButton = Instance.new("TextButton")
-startButton.Size = UDim2.new(0, 200, 0, 50)
-startButton.Position = UDim2.new(0.5, -100, 0, 140)
-startButton.BackgroundColor3 = Color3.fromRGB(255, 228, 225)
+startButton.Size = UDim2.new(0, 280, 0, 50)
+startButton.Position = UDim2.new(0.5, -140, 0.3, 0)
 startButton.Text = "Start Auto Mission 🎀"
-startButton.Font = Enum.Font.FredokaOne
-startButton.TextSize = 20
-startButton.TextColor3 = Color3.new(1, 0, 1)
+startButton.Font = Enum.Font.GothamBold
+startButton.TextSize = 16
+startButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+startButton.BackgroundColor3 = Color3.fromRGB(255, 105, 180)
 startButton.Parent = mainFrame
 
-local corner2 = Instance.new("UICorner")
-corner2.CornerRadius = UDim.new(0, 15)
-corner2.Parent = startButton
-
+-- Create the Stop Button
 local stopButton = Instance.new("TextButton")
-stopButton.Size = UDim2.new(0, 200, 0, 50)
-stopButton.Position = UDim2.new(0.5, -100, 0, 210)
-stopButton.BackgroundColor3 = Color3.fromRGB(255, 192, 203)
+stopButton.Size = UDim2.new(0, 280, 0, 50)
+stopButton.Position = UDim2.new(0.5, -140, 0.6, 0)
 stopButton.Text = "Stop Auto Mission ❌"
-stopButton.Font = Enum.Font.FredokaOne
-stopButton.TextSize = 20
-stopButton.TextColor3 = Color3.new(1, 0, 1)
+stopButton.Font = Enum.Font.GothamBold
+stopButton.TextSize = 16
+stopButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+stopButton.BackgroundColor3 = Color3.fromRGB(255, 105, 180)
 stopButton.Parent = mainFrame
 
-local corner3 = Instance.new("UICorner")
-corner3.CornerRadius = UDim.new(0, 15)
-corner3.Parent = stopButton
+-- Create the Spam Trade Request Button
+local spamTradeButton = Instance.new("TextButton")
+spamTradeButton.Size = UDim2.new(0, 280, 0, 50)
+spamTradeButton.Position = UDim2.new(0.5, -140, 0.45, 0)
+spamTradeButton.Text = "Spam Trade Request 🎁"
+spamTradeButton.Font = Enum.Font.GothamBold
+spamTradeButton.TextSize = 16
+spamTradeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+spamTradeButton.BackgroundColor3 = Color3.fromRGB(255, 105, 180)
+spamTradeButton.Parent = mainFrame
 
+-- Create the Status Label
 local statusLabel = Instance.new("TextLabel")
-statusLabel.Size = UDim2.new(0, 250, 0, 30)
-statusLabel.Position = UDim2.new(0.5, -125, 0, 280)
-statusLabel.BackgroundTransparency = 1
+statusLabel.Size = UDim2.new(1, 0, 0, 30)
+statusLabel.Position = UDim2.new(0.5, -140, 0.9, 0)
 statusLabel.Text = "Status: Idle 😴"
-statusLabel.Font = Enum.Font.FredokaOne
-statusLabel.TextSize = 18
-statusLabel.TextColor3 = Color3.fromRGB(255, 105, 180)
+statusLabel.BackgroundColor3 = Color3.fromRGB(255, 182, 193)
+statusLabel.Font = Enum.Font.GothamBold
+statusLabel.TextSize = 14
+statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 statusLabel.Parent = mainFrame
 
--- Variables
-local farming = false
+-- Remote Events
+local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+local BlowBubbleEvent = Remotes:WaitForChild("BlowBubble")
+local HatchEggEvent = ReplicatedStorage:WaitForChild("HatchEgg")
 
--- Auto Mission Logic
+-- Mission Detection and Completer
+local farming = false  -- Track if mission is active
+
+local function teleportToEgg(eggPosition)
+    -- Teleport the player to the egg position
+    local char = player.Character
+    if char then
+        local humanoidRootPart = char:WaitForChild("HumanoidRootPart")
+        humanoidRootPart.CFrame = eggPosition
+    end
+end
+
 local function autoCompleteMission()
-    farming = true
+    print("Auto mission started!")  -- Debugging
     statusLabel.Text = "Status: Auto Farming 🎀"
-    
+    farming = true
+
     while farming do
+        print("Checking mission...")  -- Debugging
         local missionText = "unknown"
         
         if missionLabel then
             missionText = missionLabel.Text:lower()
         end
         
-        if string.find(missionText, "bubble") and BlowBubbleEvent then
-            BlowBubbleEvent:FireServer()
-            print("🎈 Blowing bubble...")
-            
-        elseif string.find(missionText, "coin") and CollectCoinEvent then
-            CollectCoinEvent:FireServer("FakeCoinID") -- Replace if needed
-            print("🪙 Collecting coin...")
-            
-        elseif string.find(missionText, "hatch") and HatchEggEvent then
-            HatchEggEvent:FireServer("BasicEgg")
-            print("🥚 Hatching egg...")
-            
+        print("Mission detected: " .. missionText)  -- Debugging
+
+        if string.find(missionText, "bubble") then
+            print("🎈 Blowing bubble...")  -- Debugging
+            if BlowBubbleEvent then
+                BlowBubbleEvent:FireServer()
+            end
+        elseif string.find(missionText, "hatch") then
+            print("🥚 Hatching egg...")  -- Debugging
+            -- Detect which egg is required by analyzing the mission description
+            local eggRequired = "BasicEgg"  -- Replace with dynamic detection logic if needed
+            local eggPosition = workspace:FindFirstChild("Eggs"):FindFirstChild(eggRequired) -- Example logic to get egg position
+
+            if eggPosition then
+                teleportToEgg(eggPosition.Position)  -- Teleport player to egg
+                -- Simulate the "R" key press for auto-hatching
+                local userInputService = game:GetService("UserInputService")
+                userInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+                    if gameProcessedEvent then return end
+                    if input.KeyCode == Enum.KeyCode.R then
+                        HatchEggEvent:FireServer(eggRequired)
+                        print("Egg hatched successfully!")
+                    end
+                end)
+            else
+                print("Egg not found!")  -- Debugging if egg is not found
+            end
         else
-            print("💤 No valid mission found or unknown task...")
+            print("💤 No valid mission found.")  -- Debugging
         end
-        
-        task.wait(3)
+
+        task.wait(3)  -- Wait 3 seconds before checking again
     end
-    
+
     statusLabel.Text = "Status: Idle 😴"
+    print("Auto mission stopped.")  -- Debugging
 end
 
--- Stop Auto
 local function stopFarming()
+    print("Stopping mission...")  -- Debugging
     farming = false
-    statusLabel.Text = "Status: Idle 😴"
+    statusLabel.Text = "Status: Stopped ❌"
 end
 
--- Button Connections
-startButton.MouseButton1Click:Connect(autoCompleteMission)
-stopButton.MouseButton1Click:Connect(stopFarming)
+local function spamTradeRequest()
+    print("Spam trade requests started!")  -- Debugging
+    local targetPlayer = Players:FindFirstChild("BGS_AAA")
+    
+    if targetPlayer then
+        while true do
+            print("Sending trade request to BGS_AAA")  -- Debugging
+            player:RequestTrade(targetPlayer)
+            task.wait(1)  -- Wait 1 second before sending another trade request
+        end
+    else
+        print("Player BGS_AAA not found!")  -- Debugging if the player is not found
+    end
+end
 
--- Anti-AFK
-local VirtualUser = game:GetService('VirtualUser')
-player.Idled:Connect(function()
-    VirtualUser:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
-    task.wait(1)
-    VirtualUser:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+-- Button Actions
+startButton.MouseButton1Click:Connect(function()
+    print("Start button clicked")  -- Debugging
+    autoCompleteMission()
 end)
+
+stopButton.MouseButton1Click:Connect(function()
+    print("Stop button clicked")  -- Debugging
+    stopFarming()
+    screenGui:Destroy()  -- This will remove the GUI and stop the script
+end)
+
+spamTradeButton.MouseButton1Click:Connect(function()
+    print("Spam trade button clicked")  -- Debugging
+    spamTradeRequest()  -- Start sending trade requests
+end)
+
+print("Hello Kitty Auto Mission Script Loaded! 🎀")
